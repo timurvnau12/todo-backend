@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, status
 
 from tasks.models import Task
 from tasks.service import TaskService
@@ -12,12 +12,9 @@ def get_all():
     return task_service.get_all()
 
 
-@router.post("/tasks")
+@router.post("/tasks", status_code=status.HTTP_201_CREATED)
 def create(item: Task):
     return task_service.create(item)
-
-
-from fastapi import APIRouter, HTTPException
 
 
 @router.get("/tasks/{item_id}")
@@ -36,8 +33,8 @@ def update(item_id: int, updated: Task):
     raise HTTPException(status_code=404, detail="Item not found")
 
 
-@router.delete("/tasks/{item_id}")
+@router.delete("/tasks/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete(item_id: int):
     if task_service.delete(item_id):
-        return {"detail": "Item deleted"}
+        return None
     raise HTTPException(status_code=404, detail="Item not found")
